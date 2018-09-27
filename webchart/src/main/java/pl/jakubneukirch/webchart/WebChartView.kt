@@ -99,7 +99,7 @@ class WebChartView : View {
 
     private var labelBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
-        alpha = 128
+        alpha = 192
     }
 
     private var labelBackgroundStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
