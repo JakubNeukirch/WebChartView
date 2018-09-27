@@ -7,7 +7,7 @@ WebChart for android
 Add Repository <br/>
 ```maven { url 'https://jitpack.io' }```<br/>
 Add Dependency<br/>
-```implementation 'com.github.JakubNeukirch:WebChartView:0.5.0'```<br/>
+```implementation 'com.github.JakubNeukirch:WebChartView:0.5.1'```<br/>
 
 ## Usage
 All you need to do is add list of `Point`s into your webchart, like this:
