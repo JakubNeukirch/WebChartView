@@ -1,2 +1,0 @@
-# WebChartView
-WebChart for android
