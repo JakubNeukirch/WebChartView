@@ -21,8 +21,8 @@ webChart.points = listOf(
         )
 ```
 `Point` constructor
-|name|type|description|
-|---|:---:|:---:|
-|value|Int|value out of maxValue|
-|maxValue|Int|max value|
-|caption|String|The label which will be displayed above|
+| name | type | description |
+| --- | :---: | :---: |
+| value | Int | value out of maxValue |
+| maxValue | Int | max value |
+| caption | String | The label which will be displayed above |
