@@ -2,6 +2,7 @@ package pl.jakubneukirch.webchart
 
 import android.content.Context
 import android.graphics.*
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import kotlin.math.cos
@@ -35,6 +36,7 @@ class WebChartView : View {
             pointsPaintFill.color = value
             pointsPaintFill.alpha = fillAlpha
             pointsPaintStroke.color = value
+            pointsShadowPaint.color = value
             redraw()
         }
 
@@ -62,6 +64,8 @@ class WebChartView : View {
     private var armLength = 20
     private var angle = 360f / armCount
     private var scaleSpace = 10f
+    private var labelBackgroundRadius = 5f
+    private var labelElevation = 9f
     private var innerPadding = 10
 
     private var bitmapMatrix = Matrix()
@@ -73,7 +77,7 @@ class WebChartView : View {
     private var webPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.BLACK
         style = Paint.Style.STROKE
-        strokeWidth = 6f
+        strokeWidth = 3f
     }
     private var pointsPaintStroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -89,7 +93,7 @@ class WebChartView : View {
     private var scalePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeWidth = 2f
-        color = Color.GRAY
+        color = ContextCompat.getColor(context, R.color.scale_color)
     }
 
     private var labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -99,13 +103,20 @@ class WebChartView : View {
 
     private var labelBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
-        alpha = 192
     }
 
-    private var labelBackgroundStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
+    private var shadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.GRAY
         style = Paint.Style.STROKE
-        strokeWidth = 2f
+        strokeWidth = pointsStrokeWidth
+        maskFilter = BlurMaskFilter(labelElevation, BlurMaskFilter.Blur.NORMAL)
+    }
+
+    private var pointsShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = webColor
+        style = Paint.Style.STROKE
+        strokeWidth = pointsStrokeWidth
+        maskFilter = BlurMaskFilter(labelElevation, BlurMaskFilter.Blur.NORMAL)
     }
 
     constructor(context: Context) : super(context)
@@ -117,10 +128,16 @@ class WebChartView : View {
         redraw()
     }
 
+    init {
+        setLayerType(LAYER_TYPE_SOFTWARE, shadowPaint)
+        setLayerType(LAYER_TYPE_SOFTWARE, pointsShadowPaint)
+    }
+
     private fun redraw() {
         invalidateData()
-        canvas.drawPath(webPath, webPaint)
         canvas.drawPath(scalePath, scalePaint)
+        canvas.drawPath(webPath, webPaint)
+        canvas.drawPath(pointsPath, pointsShadowPaint)
         canvas.drawPath(pointsPath, pointsPaintFill)
         canvas.drawPath(pointsPath, pointsPaintStroke)
         drawText()
@@ -158,7 +175,7 @@ class WebChartView : View {
         var rect: RectF
         for (i in 0 until last) {
             value = points[i].caption
-            if(value.isNotEmpty()){
+            if (value.isNotEmpty()) {
                 coord = getPointAtArm(i, armLength.toFloat())
                 labelPaint.getTextBounds(value, 0, value.length, bounds)
 
@@ -166,8 +183,8 @@ class WebChartView : View {
                 y = getTextY(coord, bounds)
                 rect = getTextRect(x, y, bounds)
 
-                canvas.drawRect(rect, labelBackgroundPaint)
-                canvas.drawRect(rect, labelBackgroundStrokePaint)
+                canvas.drawRoundRect(rect, labelBackgroundRadius, labelBackgroundRadius, shadowPaint)
+                canvas.drawRoundRect(rect, labelBackgroundRadius, labelBackgroundRadius, labelBackgroundPaint)
                 canvas.drawText(value, x, y, labelPaint)
             }
         }
@@ -182,7 +199,7 @@ class WebChartView : View {
         )
     }
 
-    private fun getTextX(coord: Pair<Float,Float>, bounds: Rect): Float {
+    private fun getTextX(coord: Pair<Float, Float>, bounds: Rect): Float {
         return if (coord.first + bounds.width() + paddingEnd > canvas.width) {
             canvas.width - bounds.width().toFloat() - paddingEnd
         } else {
@@ -190,7 +207,7 @@ class WebChartView : View {
         }
     }
 
-    private fun getTextY(coord: Pair<Float,Float>, bounds: Rect): Float {
+    private fun getTextY(coord: Pair<Float, Float>, bounds: Rect): Float {
         return if (coord.second - bounds.height() - paddingTop < 0) {
             bounds.height() + paddingTop.toFloat()
         } else {
