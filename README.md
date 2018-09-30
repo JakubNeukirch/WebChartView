@@ -1,3 +1,4 @@
+[![](https://jitpack.io/v/JakubNeukirch/WebChartView.svg)](https://jitpack.io/#JakubNeukirch/WebChartView)
 # WebChartView
 WebChart for android
 
