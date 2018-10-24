@@ -135,11 +135,14 @@ class WebChartView : View {
 
     private fun redraw() {
         invalidateData()
-        canvas.drawPath(scalePath, scalePaint)
-        canvas.drawPath(webPath, webPaint)
-        canvas.drawPath(pointsPath, pointsShadowPaint)
-        canvas.drawPath(pointsPath, pointsPaintFill)
-        canvas.drawPath(pointsPath, pointsPaintStroke)
+        with(canvas) {
+            drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+            drawPath(scalePath, scalePaint)
+            drawPath(webPath, webPaint)
+            drawPath(pointsPath, pointsShadowPaint)
+            drawPath(pointsPath, pointsPaintFill)
+            drawPath(pointsPath, pointsPaintStroke)
+        }
         drawText()
         invalidate()
     }
@@ -276,6 +279,7 @@ class WebChartView : View {
     private fun getCanvasCenter() = Pair(canvasBitmap.width / 2f, canvasBitmap.height / 2f)
 
     override fun onDraw(canvas: Canvas) {
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
         canvas.drawBitmap(canvasBitmap, bitmapMatrix, bitmapPaint)
     }
 

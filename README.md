@@ -41,3 +41,6 @@ Available xml attributes
 
 ### 0.5.2
 - Improved appearance
+
+### 0.5.3
+- Fixed redrawing on top
